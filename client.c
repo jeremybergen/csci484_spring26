@@ -16,15 +16,15 @@ int main(int argc, char* argv[])
     address.sin_port = htons(1234);
 
 
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
 
     connect(sockfd, (struct sockaddr *) &address, sizeof(address));
 
     char buffer[1024] = {0};
     read(0, buffer, 1024);
     send(sockfd, buffer, strlen(buffer), 0);
-    memset(buffer, 0, strlen(buffer));
-    recv(sockfd, buffer, 1024, 0);
-    printf("received from server: %s\n", buffer);
+    // memset(buffer, 0, strlen(buffer));
+    // recv(sockfd, buffer, 1024, 0);
+    // printf("received from server: %s\n", buffer);
     return 0;
 }

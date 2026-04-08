@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 int main(int argc, char* argv[])
 {
@@ -28,15 +29,30 @@ int main(int argc, char* argv[])
     printf("Server socket: %d\n", sockfd);
 
     bind(sockfd, res->ai_addr, res->ai_addrlen);
-    // listen(sockfd, 1);
+    listen(sockfd, 1);
 
-    // clientfd = accept(sockfd, (struct sockaddr *) &clientAddress, (socklen_t *) &addrsize);
+    clientfd = accept(sockfd, (struct sockaddr *) &clientAddress, (socklen_t *) &addrsize);
 
-    FILE *fin = fopen("test.txt", "rb");
+    FILE *fin = fopen("server.out", "rb");
     fseek(fin, 0, SEEK_END);
     ssize_t filesize = ftell(fin);
     rewind(fin);
-    printf("file size: %ld\n", filesize);
+
+    char buffer[1024] = {0};
+    sprintf(buffer, "%ld", filesize);
+    send(clientfd, buffer, strlen(buffer), 0);
+    memset(buffer, 0, strlen(buffer));
+    recv(clientfd, buffer, 1024, 0);
+    memset(buffer, 0, strlen(buffer));
+
+    char *filebuffer;
+    filebuffer = (char*)malloc(filesize);
+    fread(filebuffer, 1, filesize, fin);
+    send(clientfd, filebuffer, filesize, 0);
+    free(filebuffer);
+    fclose(fin);
+
+    // printf("file size: %ld\n", filesize);
     // char* filebuf;
 
 

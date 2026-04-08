@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
+    hints.ai_socktype = SOCK_DGRAM;
     hints.ai_flags = AI_PASSIVE;
     getaddrinfo(NULL, "1234", &hints, &res);
 
@@ -36,16 +36,20 @@ int main(int argc, char* argv[])
     bind(sockfd, res->ai_addr, res->ai_addrlen);
     listen(sockfd, 1);
 
-    clientfd = accept(sockfd, (struct sockaddr *) &clientAddress, (socklen_t *) &addrsize);
-    printf("client fd: %d\n", clientfd);
-
     char buffer[1024] = {0};
-    recv(clientfd, buffer, 1024, 0);
-    printf("Received from client: %s\n", buffer);
+    recv(sockfd, buffer, 1024, 0);
+    printf("received: %s\n", buffer);
 
-    char newBuffer[1024] = {0};
-    sprintf(newBuffer, "From server: %s", buffer);
-    send(clientfd, newBuffer, strlen(newBuffer), 0);
+    // clientfd = accept(sockfd, (struct sockaddr *) &clientAddress, (socklen_t *) &addrsize);
+    // printf("client fd: %d\n", clientfd);
+
+    // char buffer[1024] = {0};
+    // recv(clientfd, buffer, 1024, 0);
+    // printf("Received from client: %s\n", buffer);
+
+    // char newBuffer[1024] = {0};
+    // sprintf(newBuffer, "From server: %s", buffer);
+    // send(clientfd, newBuffer, strlen(newBuffer), 0);
 
     // while(1)
     // {
